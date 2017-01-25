@@ -2,6 +2,7 @@ package io.continuousfeedback.core.test.unit
 
 import com.winterbe.expekt.should
 import io.continuousfeedback.core.ViewOutstandingFeedback
+import io.continuousfeedback.core.domain.Feedback
 import io.continuousfeedback.core.test.doubles.gateway.InMemoryFeedbackGateway
 import io.continuousfeedback.core.usecase.ViewOutstandingFeedback.Presenter
 import io.continuousfeedback.core.usecase.ViewOutstandingFeedback.Presenter.OutstandingFeedback
@@ -32,7 +33,7 @@ class ViewOutstandingFeedbackSpec : SubjectSpek<ViewOutstandingFeedback>({
         var feedback: List<OutstandingFeedback> = listOf()
         val expectedComment = "test feedback"
         beforeGroup {
-            feedbackGateway.addFeedback(expectedComment)
+            feedbackGateway.addFeedback(Feedback(1, expectedComment))
             subject.execute(Request(teamMemberId = 1), object : Presenter {
                 override fun presentFeedback(f: List<OutstandingFeedback>) {
                     feedback = f
@@ -50,7 +51,7 @@ class ViewOutstandingFeedbackSpec : SubjectSpek<ViewOutstandingFeedback>({
         val expectedComments : List<String> = listOf("Test 1", "Test 2", "Test 3")
         beforeGroup {
             feedbackGateway.clearFeedback()
-            expectedComments.forEach { feedbackGateway.addFeedback(it) }
+            expectedComments.forEach { feedbackGateway.addFeedback(Feedback(1, it)) }
             subject.execute(Request(teamMemberId = 1), object : Presenter {
                 override fun presentFeedback(f: List<OutstandingFeedback>) {
                     feedback = f;
