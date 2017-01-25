@@ -4,8 +4,12 @@ import com.madetech.clean.boundary.CleanApplication
 import com.madetech.clean.usecase.AsynchronousUseCase
 import io.continuousfeedback.core.OneToOneGateway
 import io.continuousfeedback.core.TeamGateway
-import io.continuousfeedback.core.FeedbackGateway
 import io.continuousfeedback.core.usecase.*
+import io.continuousfeedback.core.usecase.CreateTeamMember
+import io.continuousfeedback.core.usecase.RequestFeedback
+import io.continuousfeedback.core.usecase.ViewNextOneToOne
+import io.continuousfeedback.core.FeedbackGateway
+import io.continuousfeedback.core.usecase.ViewOutstandingFeedback
 import kotlin.reflect.KClass
 
 abstract class ContinuousFeedback : CleanApplication() {
