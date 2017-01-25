@@ -1,7 +1,8 @@
 package io.continuousfeedback.core
 
-import io.continuousfeedback.core.usecase.ViewOutstandingFeedback.Presenter.OutstandingFeedback
+import io.continuousfeedback.core.domain.Feedback
 
 interface FeedbackGateway {
-    fun GetOutstandingFeedbackForMember(id: Int) : List<OutstandingFeedback>
+    fun getOutstandingFeedbackForMember(id: Int) : List<Feedback>
+    fun createFeedback(feedback: Feedback) : Boolean
 }
