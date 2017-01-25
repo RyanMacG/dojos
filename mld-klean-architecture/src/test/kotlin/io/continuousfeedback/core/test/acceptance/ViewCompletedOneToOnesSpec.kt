@@ -4,8 +4,10 @@ import com.winterbe.expekt.should
 import io.continuousfeedback.core.boundary.ContinuousFeedback
 import io.continuousfeedback.core.domain.OneToOne
 import io.continuousfeedback.core.test.doubles.InMemoryContinuousFeedback
+import io.continuousfeedback.core.test.doubles.presenter.ViewCompletedOneToOnesPresenter
 import io.continuousfeedback.core.test.doubles.presenter.ViewNextOneToOnePresenter
 import io.continuousfeedback.core.usecase.CreateTeamMember
+import io.continuousfeedback.core.usecase.ViewCompletedOneToOnes
 import io.continuousfeedback.core.usecase.ViewNextOneToOne
 
 import org.jetbrains.spek.api.Spek
@@ -14,20 +16,20 @@ import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 
-object ViewNextOneToOneSpec : Spek({
+object ViewCompletedOneToOnesSpec : Spek({
     val continuousFeedback: ContinuousFeedback = InMemoryContinuousFeedback()
 
-    describe("viewing the next one to one") {
-        var nextOneToOne: ViewNextOneToOne.Presenter.OneToOne? = null
+    describe("viewing a list of completed one to ones") {
+        var completedOneToOnes: List<ViewCompletedOneToOnes.Presenter.OneToOne> = listOf()
 
-        fun executeViewNextOneToOne(id: Int) {
-            val presenter = ViewNextOneToOnePresenter(
-                    onSuccess = { nextOneToOne = it }
+        fun executeViewCompletedOneToOnes(teamMemberId: Int) {
+            val presenter = ViewCompletedOneToOnesPresenter(
+                    onSuccess = { completedOneToOnes = it }
             )
 
             continuousFeedback.executeUseCase(
-                    ViewNextOneToOne::class,
-                    ViewNextOneToOne.Request(id),
+                    ViewCompletedOneToOnes::class,
+                    ViewCompletedOneToOnes.Request(id = teamMemberId),
                     presenter
             )
         }
@@ -35,7 +37,7 @@ object ViewNextOneToOneSpec : Spek({
         given("A team member") {
             context("With an upcoming one to one") {
                 beforeEachTest {
-                    nextOneToOne = null
+                    completedOneToOnes = listOf()
                     continuousFeedback.oneToOneGateway.clear()
 
                     continuousFeedback.oneToOneGateway.save(OneToOne(
@@ -46,24 +48,24 @@ object ViewNextOneToOneSpec : Spek({
                             completed = true
                     ))
 
-                    executeViewNextOneToOne(1)
+                    executeViewCompletedOneToOnes(1)
                 }
 
-                it("returns the one to one") {
-                    nextOneToOne?.id.should.equal(1)
+                it("returns a list of one to ones") {
+                    completedOneToOnes.size.should.equal(1)
                 }
             }
 
-            context("Without an upcoming one to one") {
+            context("Without a completed one to one") {
                 beforeEachTest {
-                    nextOneToOne = null
+                    completedOneToOnes = listOf()
                     continuousFeedback.oneToOneGateway.clear()
 
-                    executeViewNextOneToOne(1)
+                    executeViewCompletedOneToOnes(1)
                 }
 
-                it("returns the one to one") {
-                    nextOneToOne.should.be.`null`
+                it("returns no one to ones") {
+                    completedOneToOnes.size.should.equal(0)
                 }
             }
         }
